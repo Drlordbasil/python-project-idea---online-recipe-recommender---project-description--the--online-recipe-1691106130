@@ -21,11 +21,15 @@ class RecipeScraper:
         response = requests.get(self.url)
         soup = BeautifulSoup(response.content, "html.parser")
         recipe_name = soup.find("h1").text.strip()
-        ingredients = [ingredient.text.strip() for ingredient in soup.find_all("li", class_="ingredient")]
-        instructions = [step.text.strip() for step in soup.find_all("li", class_="instruction")]
+        ingredients = [ingredient.text.strip()
+                       for ingredient in soup.find_all("li", class_="ingredient")]
+        instructions = [step.text.strip()
+                        for step in soup.find_all("li", class_="instruction")]
         cooking_time = soup.find("span", class_="cooking-time").text.strip()
-        difficulty_level = soup.find("span", class_="difficulty-level").text.strip()
-        recipe = Recipe(recipe_name, ingredients, instructions, cooking_time, difficulty_level)
+        difficulty_level = soup.find(
+            "span", class_="difficulty-level").text.strip()
+        recipe = Recipe(recipe_name, ingredients, instructions,
+                        cooking_time, difficulty_level)
         return recipe
 
 
@@ -37,13 +41,15 @@ class RecipeRecommender:
 
     def build_recipe_matrix(self):
         recipe_names = [recipe.name for recipe in self.recipes]
-        ingredients_list = [' '.join(recipe.ingredients) for recipe in self.recipes]
+        ingredients_list = [' '.join(recipe.ingredients)
+                            for recipe in self.recipes]
         recipe_matrix = self.vectorizer.fit_transform(ingredients_list)
         return recipe_matrix, recipe_names
 
     def recommend_recipes(self, user_ingredients):
         user_input_vector = self.vectorizer.transform(user_ingredients)
-        similarity_scores = cosine_similarity(user_input_vector, self.recipe_matrix)
+        similarity_scores = cosine_similarity(
+            user_input_vector, self.recipe_matrix)
         top_recipe_indices = similarity_scores.argsort().flatten()[::-1][:5]
         recommendations = [self.recipe_names[i] for i in top_recipe_indices]
         return recommendations
@@ -80,7 +86,8 @@ class UserInterface:
 
     def run_recommendation(self):
         dietary_preferences, user_ingredients = self.get_user_input()
-        recommendations = self.recipe_recommender.recommend_recipes(user_ingredients)
+        recommendations = self.recipe_recommender.recommend_recipes(
+            user_ingredients)
 
         print("Here are some recipe recommendations for you based on your input:\n")
         for recommendation in recommendations:
