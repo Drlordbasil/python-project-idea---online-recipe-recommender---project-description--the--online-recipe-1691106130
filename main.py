@@ -70,9 +70,12 @@ class UserInterface:
         for url in recipe_urls:
             scraper = RecipeScraper(url)
             recipe = scraper.scrape_recipe()
-            self.recipes.append(recipe)
+            self.add_recipe(recipe)
 
         self.recipe_recommender = RecipeRecommender(self.recipes)
+
+    def add_recipe(self, recipe):
+        self.recipes.append(recipe)
 
     def get_user_input(self):
         print("Welcome to the Online Recipe Recommender!")
